@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+<Type Name="MIR::FValue">
+	<DisplayString Condition="Kind == MIR::VK_Dimensional"> Dimensional </DisplayString>
+	<Expand>
+		<Item Name="[Kind]"> Kind </Item>
+
+		<!-- Dimensional: Vector (float) -->
+		<Item Name="[X]" Condition="Kind == MIR::VK_Dimensional &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->ScalarKind == SK_Float &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->NumColumns == 1 &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->NumRows >= 1">
+			((float*) ((MIR::FDimensional*)this)->Components )[0]
+        </Item>
+
+        <Item Name="[Y]" Condition="Kind == MIR::VK_Dimensional &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->ScalarKind == SK_Float &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->NumColumns == 1 &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->NumRows >= 2">
+			((float*) ((MIR::FDimensional*)this)->Components )[1]
+		</Item>
+
+		<Item Name="[Z]" Condition="Kind == MIR::VK_Dimensional &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->ScalarKind == SK_Float &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->NumColumns == 1 &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->NumRows >= 3">
+			((float*) ((MIR::FDimensional*)this)->Components )[2]
+        </Item>
+
+        <Item Name="[Z]" Condition="Kind == MIR::VK_Dimensional &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->ScalarKind == SK_Float &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->NumColumns == 1 &amp;&amp; ((MIR::FPrimitiveTYpe*)Type)->NumRows >= 4">
+			((float*) ((MIR::FDimensional*)this)->Components )[3]
+		</Item>
+
+	</Expand>
+</Type>
+
+</AutoVisualizer>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+    <!-- Epic Games, Inc. Verse Visualizers -->
+
+    <!-- TOptional -->
+    <Type Name="uLang::TOptional&lt;*&gt;">
+        <DisplayString Condition="_Result == 0">{{{*($T1*)&amp;_Value}}}</DisplayString>
+        <DisplayString Condition="_Result &lt; 0">Unspecified</DisplayString>
+        <DisplayString Condition="_Result &gt; 0">Error</DisplayString>
+        <Expand>
+            <ExpandedItem Condition="_Result == 0">*($T1*)&amp;_Value</ExpandedItem>
+        </Expand>
+    </Type>
+
+    <!-- TSPtr -->
+    <Type Name="uLang::TSPtrG&lt;*,*,*&gt;">
+        <DisplayString Condition="_Object == 0">Null</DisplayString>
+        <DisplayString Condition="_Object != 0">{{{*_Object}}}, Refs={_Object->_RefCount,d}</DisplayString>
+        <Expand>
+            <ExpandedItem Condition="_Object != 0">*_Object</ExpandedItem>
+        </Expand>
+    </Type>
+
+    <!-- CSharedMix -->
+    <Type Name="uLang::CSharedMix">
+        <DisplayString>RefCount={_RefCount,d}</DisplayString>
+    </Type>
+
+    <!-- TUPtr -->
+    <Type Name="uLang::TUPtrG&lt;*,*,*&gt;">
+        <DisplayString Condition="_Object == 0">Null</DisplayString>
+        <DisplayString Condition="_Object != 0">{{{*_Object}}}</DisplayString>
+        <Expand>
+            <ExpandedItem Condition="_Object != 0">*_Object</ExpandedItem>
+        </Expand>
+    </Type>
+
+    <!-- TOPtr -->
+    <Type Name="uLang::TOPtr&lt;*&gt;">
+        <DisplayString Condition="_Object == 0">Null</DisplayString>
+        <DisplayString Condition="_Object != 0">{{{*_Object}}}, Id={_ObserverId}</DisplayString>
+        <Expand>
+            <ExpandedItem Condition="_Object != 0">*_Object</ExpandedItem>
+        </Expand>
+    </Type>
+
+    <!-- TTypeCompatibleBytes -->
+    <Type Name="uLang::TTypeCompatibleBytes&lt;*&gt;">
+        <DisplayString Condition="this == 0">Null</DisplayString>
+        <DisplayString Condition="this != 0">{*($T1*)this}</DisplayString>
+        <Expand>
+            <ExpandedItem Condition="this != 0">*($T1*)this</ExpandedItem>
+        </Expand>
+    </Type>
+
+    <!-- CObservedMix -->
+    <Type Name="uLang::CObservedMix">
+        <DisplayString>Id={_ObserverId}</DisplayString>
+    </Type>
+
+    <!-- TArray -->
+    <Type Name="uLang::TArrayG&lt;*,*&gt;">
+        <DisplayString Condition="_ArrayNum == 0">Empty</DisplayString>
+        <DisplayString Condition="_ArrayNum &lt; 0">Invalid</DisplayString>
+        <DisplayString Condition="_ArrayMax &lt; _ArrayNum">Invalid</DisplayString>
+        <DisplayString Condition="_ArrayMax &gt;= _ArrayNum">Num={_ArrayNum,d}</DisplayString>
+        <Expand>
+            <!-- handle TDefaultElementAllocator -->
+            <ArrayItems Optional="true" Condition="(_ArrayNum &lt;= _ArrayMax) &amp;&amp; (_ElementStorage._Data != 0)">
+                <Size>_ArrayNum,d</Size>
+                <ValuePointer>(ElementType*)_ElementStorage._Data</ValuePointer>
+            </ArrayItems>
+            <!-- handle TInlineElementAllocator -->
+            <ArrayItems Optional="true" Condition="(_ArrayNum &lt;= _ArrayMax) &amp;&amp; (_ElementStorage._SecondaryData._Data == 0)">
+                <Size>_ArrayNum,d</Size>
+                <ValuePointer>_ElementStorage.InlineData</ValuePointer>
+            </ArrayItems>
+            <ArrayItems Optional="true" Condition="(_ArrayNum &lt;= _ArrayMax) &amp;&amp; (_ElementStorage._SecondaryData._Data != 0)">
+                <Size>_ArrayNum,d</Size>
+                <ValuePointer>(ElementType*)_ElementStorage._SecondaryData._Data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <!-- TMap -->
+    <Type Name="uLang::TMapG&lt;*,*,*,*&gt;">
+        <DisplayString>{_HashTable._NumOccupied} pairs in {_HashTable._NumEntries} buckets</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="Index" InitialValue="0"/>
+                <Loop>
+                    <Break Condition="Index >= _HashTable._NumEntries"/>
+                    <If Condition="_HashTable._Entries[Index]._Hash != 0">
+                        <Item Name="{_HashTable._Entries[Index]._KeyValue._Key}=>{_HashTable._Entries[Index]._KeyValue._Value}">
+                            _HashTable._Entries[Index]._KeyValue._Value
+                        </Item>
+                    </If>
+                    <Exec>++Index</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <!-- TSPtrArray -->
+    <Type Name="uLang::TSPtrArrayG&lt;*,*,*&gt;">
+        <DisplayString Condition="_PointerStorage._ArrayNum == 0">Empty</DisplayString>
+        <DisplayString Condition="_PointerStorage._ArrayNum &lt; 0">Invalid</DisplayString>
+        <DisplayString Condition="_PointerStorage._ArrayMax &lt; _PointerStorage._ArrayNum">Invalid</DisplayString>
+        <DisplayString Condition="_PointerStorage._ArrayMax &gt;= _PointerStorage._ArrayNum">Num={_PointerStorage._ArrayNum,d}</DisplayString>
+        <Expand>
+            <ArrayItems Condition="_PointerStorage._ArrayNum &lt;= _PointerStorage._ArrayMax">
+                <Size>_PointerStorage._ArrayNum,d</Size>
+                <ValuePointer>(uLang::TSPtrArrayG&lt;$T1,$T2,$T3&gt;::ElementType**)_PointerStorage._ElementStorage._Data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <!-- TUPtrArray -->
+    <Type Name="uLang::TUPtrArrayG&lt;*,*,*&gt;">
+        <DisplayString Condition="_PointerStorage._ArrayNum == 0">Empty</DisplayString>
+        <DisplayString Condition="_PointerStorage._ArrayNum &lt; 0">Invalid</DisplayString>
+        <DisplayString Condition="_PointerStorage._ArrayMax &lt; _PointerStorage._ArrayNum">Invalid</DisplayString>
+        <DisplayString Condition="_PointerStorage._ArrayMax &gt;= _PointerStorage._ArrayNum">Num={_PointerStorage._ArrayNum,d}</DisplayString>
+        <Expand>
+            <ArrayItems Condition="_PointerStorage._ArrayNum &lt;= _PointerStorage._ArrayMax">
+                <Size>_PointerStorage._ArrayNum,d</Size>
+                <ValuePointer>(uLang::TUPtrArrayG&lt;$T1,$T2,$T3&gt;::ElementType**)_PointerStorage._ElementStorage._Data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <!-- CUTF8StringView visualizer -->
+    <Type Name="uLang::CUTF8StringView">
+        <DisplayString Condition="_End == _Begin">""</DisplayString>
+        <DisplayString Condition="_End &lt; _Begin">&#8211;Invalid&#8211;</DisplayString>
+        <DisplayString Condition="_End &gt; _Begin">{_Begin,[_End - _Begin]s8}</DisplayString>
+        <DisplayString>&#8211;Uninitialized&#8211;</DisplayString>
+        <StringView Condition="_End &gt; _Begin">_Begin,[_End - _Begin]s8</StringView>
+    </Type>
+
+    <!-- TUTF8String visualizer -->
+    <Type Name="uLang::TUTF8String&lt;*&gt;">
+        <DisplayString>{_String}</DisplayString>
+        <StringView>_String</StringView>
+    </Type>
+
+    <Type Name="uLang::TUTF8StringBuilder&lt;*&gt;">
+        <DisplayString>{_String}</DisplayString>
+        <StringView>_String</StringView>
+    </Type>
+
+    <!-- SEntry -->
+    <Type Name="uLang::CSymbolTable::SEntry">
+        <DisplayString>{(char*)(&amp;_Data),s8b}</DisplayString>
+        <StringView>(char*)(&amp;_Data),s8</StringView>
+    </Type>
+
+    <!-- CSymbol -->
+    <Type Name="uLang::CSymbol">
+        <DisplayString>{*_Entry}</DisplayString>
+        <StringView>(char*)(&amp;_Entry[1]),s8</StringView>
+    </Type>
+
+    <!-- CSymbolTable -->
+    <Type Name="uLang::CSymbolTable">
+        <DisplayString>HighestId={_HighestUsedId,d}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="Index" InitialValue="0"/>
+                <Variable Name="Chunk" InitialValue="0"/>
+                <Variable Name="Entry" InitialValue="(uLang::CSymbolTable::SEntry*)0"/>
+                <If Condition="_IdChunkShift != 0">
+                    <Loop>
+                        <Break Condition="Chunk * (1 &lt;&lt; _IdChunkShift) + Index == _HighestUsedId"/>
+                        <If Condition="Index == 1 &lt;&lt; _IdChunkShift">
+                            <Exec>Index = 0</Exec>
+                            <Exec>Chunk = Chunk + 1</Exec>
+                        </If>
+                        <Item>*((uLang::CSymbolTable::SEntry***)_IdLookupTable._ElementStorage._Data)[Chunk][Index]</Item>
+                        <Exec>Index = Index + 1</Exec>
+                    </Loop>
+                </If>
+                <If Condition="_IdChunkShift == 0">
+                    <Loop>
+                        <If Condition="Entry != 0">
+                            <Exec>Entry = Entry->_HashNext</Exec>
+                        </If>
+                        <If Condition="Entry == 0">
+                            <Break Condition="Index == _HashBuckets._ArrayNum"/>
+                            <Exec>Entry = ((uLang::CSymbolTable::SEntry**)_HashBuckets._ElementStorage._Data)[Index]</Exec>
+                            <Exec>Index = Index + 1</Exec>
+                        </If>
+                        <Item Condition="Entry != 0">*Entry</Item>
+                    </Loop>
+                </If>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <!-- CNamed -->
+    <Type Name="uLang::CNamed">
+        <DisplayString>{_Name}</DisplayString>
+    </Type>
+
+    <!-- STextRange - this visualizer adds 1 to 0-based _Row and _Column for text editor ease-of-use -->
+    <Type Name="uLang::STextRange">
+        <DisplayString Condition="_Begin._Row == 4294967295">---</DisplayString>
+        <DisplayString>{_Begin._Row+1,u},{_Begin._Column+1,u}..{_End._Row+1,u},{_End._Column+1,u}</DisplayString>
+    </Type>
+
+</AutoVisualizer>

@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+    <!-- Epic Games, Inc. Verse types and expressions Visualizers -->
+
+    <!-- Parser -->
+
+    <Type Name="Verse::Grammar::text">
+        <DisplayString Condition="Start == Stop">""</DisplayString>
+        <DisplayString Condition="Start != Stop">{Start,[Stop-Start]s8}</DisplayString>
+    </Type>
+
+    <Type Name="Verse::Grammar::token">
+        <DisplayString Condition="Index == 0">unknown</DisplayString>
+        <DisplayString Condition="Index == 1">end</DisplayString>
+        <DisplayString Condition="Index == 2">NewLine</DisplayString>
+        <DisplayString Condition="Index == 3">Alpha</DisplayString>
+        <DisplayString Condition="Index == 4">Digit</DisplayString>
+        <DisplayString Condition="Index > 4">{Verse::Grammar::Tokens[Index].Symbol,s8}</DisplayString>
+    </Type>
+
+    <Type Name="Verse::Grammar::snippet">
+        <DisplayString>{Text} {StartLine,u},{StartColumn,u}..{StopLine,u},{StopColumn,u}</DisplayString>
+    </Type>
+
+    <Type Name="Verse::Grammar::block&lt;*,*&gt;">
+        <DisplayString>block[{Elements}] {BlockSnippet.Text}</DisplayString>
+    </Type>
+
+    <Type Name="Verse::Grammar::result&lt;*,*&gt;">
+        <DisplayString Condition="Success == true">{Value}</DisplayString>
+        <DisplayString Condition="Success == false">{Error}</DisplayString>
+        <DisplayString Condition="Success > 1">-InvalidResult-</DisplayString>
+    </Type>
+
+    <Type Name="Verse::Grammar::parser_base::cursor">
+        <DisplayString>Token:{Token} Line:{Line} Pos:{Pos,s8}</DisplayString>
+    </Type>
+
+    <Type Name="FSolarisTextSnippet">
+        <DisplayString>{SnippetName}</DisplayString>
+    </Type>
+
+    <!-- Identifiers -->
+
+    <Type Name="uLang::CQualifier">
+        <DisplayString Condition="_Type == 0">{_Name}</DisplayString>
+        <DisplayString Condition="_Type != 0">{*_Type}.{_Name}</DisplayString>
+    </Type>
+
+    <!-- Source Project -->
+
+    <Type Name="uLang::CSourceProject">
+        <DisplayString>SourceProject|{_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CSourcePackage">
+        <DisplayString>SourcePackage|{_Name}|{_Settings._VersePath}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CSourceProject::SPackage">
+        <DisplayString>SourceProject.Package|{_Package}|{_Package._Settings._VersePath}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CSourceModule">
+        <DisplayString>SourceModule|{_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CSourceFileSnippet">
+        <DisplayString>{_FilePath}</DisplayString>
+    </Type>
+
+    <!-- Types -->
+
+    <Type Name="uLang::CGlobalType&lt;0&gt;">
+        <DisplayString>$unknown</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;1&gt;">
+        <DisplayString>false</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;2&gt;">
+        <DisplayString>true</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;3&gt;">
+        <DisplayString>void</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;4&gt;">
+        <DisplayString>any</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;5&gt;">
+        <DisplayString>comparable</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;6&gt;">
+        <DisplayString>logic</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;7&gt;">
+        <DisplayString>int</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;8&gt;">
+        <DisplayString>rational</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;9&gt;">
+        <DisplayString>float</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;10&gt;">
+        <DisplayString>char8</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;11&gt;">
+        <DisplayString>char32</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;12&gt;">
+        <DisplayString>path</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGlobalType&lt;13&gt;">
+        <DisplayString>$range</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CPointerType">
+        <DisplayString>^{*_ValueType}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CReferenceType">
+        <DisplayString>ref {*_ValueType}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CArrayType">
+        <DisplayString>[]{*_ValueType}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGeneratorType">
+        <DisplayString>generator {*_ValueType}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CMapType">
+        <DisplayString>[{*_KeyType}]{*_ValueType}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::COptionalType">
+        <DisplayString>?{*_ValueType}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CTypeType">
+        <DisplayString>type({*_NegativeType},{*_PositiveType})</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CClass">
+        <DisplayString>{_Definition->_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CInterface">
+        <DisplayString>{_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CEnumeration">
+        <DisplayString>{_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CParametricTypeInstance">
+        <DisplayString Condition="_Arguments._ArrayNum == 0"   >{_ParametricType._Name}()</DisplayString>
+        <DisplayString Condition="_Arguments._ArrayNum == 1"   >{_ParametricType._Name}({**((uLang::CTypeBase**)_Arguments._ElementStorage._Data+0)})</DisplayString>
+        <DisplayString Condition="_Arguments._ArrayNum == 2"   >{_ParametricType._Name}({**((uLang::CTypeBase**)_Arguments._ElementStorage._Data+0)}, {**((uLang::CTypeBase**)_Arguments._ElementStorage._Data+1)})</DisplayString>
+        <DisplayString Condition="_Arguments._ArrayNum &gt;= 3">{_ParametricType._Name}({**((uLang::CTypeBase**)_Arguments._ElementStorage._Data+0)}, {**((uLang::CTypeBase**)_Arguments._ElementStorage._Data+1)}, ...)</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CGenericProxyType">
+        <DisplayString>generic_proxy({_InstantiatedType})</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CTupleType">
+        <DisplayString Condition="_Elements._ArrayNum == 0">tuple()</DisplayString>
+        <DisplayString Condition="_Elements._ArrayNum == 1">tuple({**(uLang::CTypeBase**)_Elements._ElementStorage._Data})</DisplayString>
+        <DisplayString Condition="_Elements._ArrayNum == 2">tuple({**(uLang::CTypeBase**)_Elements._ElementStorage._Data}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+1)})</DisplayString>
+        <DisplayString Condition="_Elements._ArrayNum == 3">tuple({**(uLang::CTypeBase**)_Elements._ElementStorage._Data}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+1)}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+2)})</DisplayString>
+        <DisplayString Condition="_Elements._ArrayNum == 4">tuple({**(uLang::CTypeBase**)_Elements._ElementStorage._Data}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+1)}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+2)}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+3)})</DisplayString>
+        <DisplayString Condition="_Elements._ArrayNum &gt;= 5">tuple({**(uLang::CTypeBase**)_Elements._ElementStorage._Data}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+1)}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+2)}, {**((uLang::CTypeBase**)_Elements._ElementStorage._Data+3)}, ...)</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CFunctionType">
+        <DisplayString>{_ParamsType}-&gt;{_ReturnType}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CTypeVariable">
+        <DisplayString>{_Name} where {_Name}:{*_Type}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CNamedType">
+        <DisplayString Condition="_HasValue">?{_Name}:{*_ValueType} = ...</DisplayString>
+        <DisplayString Condition="!_HasValue">?{_Name}:{*_ValueType}</DisplayString>
+    </Type>
+
+    <!-- Toolchain -->
+
+    <Type Name="uLang::CSemanticProgram">
+        <DisplayString Condition="_AstProject._Object == 0">SemanticProg|---</DisplayString>
+        <DisplayString Condition="_AstProject._Object != 0">SemanticProg|{(*_AstProject._Object)._Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::SProgramContext">
+        <DisplayString>{_Program}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CModule">
+        <DisplayString>Module|{CNamed::_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CModulePart">
+        <DisplayString>ModulePart|{_Module._Name} in {_AstPackage->_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CSnippet">
+        <DisplayString>Snippet|{CNamed::_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CFunction">
+        <DisplayString>Function|{CNamed::_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CTypeAlias">
+        <DisplayString>Type|{CNamed::_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CTypedName">
+        <DisplayString Condition="_Type != 0">{CNamed::_Name}:{*_Type}</DisplayString>
+        <DisplayString Condition="_Type == 0">{CNamed::_Name}:-</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CDefinition" Inheritable="false">
+        <Expand>
+            <Item Name="[CModule]" Condition="_Kind == uLang::CDefinition::EKind::Module">*(uLang::CModule*)this</Item>
+            <Item Name="[CClassDefinition]" Condition="_Kind == uLang::CDefinition::EKind::Class">*(uLang::CClassDefinition*)this</Item>
+            <Item Name="[CInterface]" Condition="_Kind == uLang::CDefinition::EKind::Interface">*(uLang::CInterface*)this</Item>
+            <Item Name="[CEnumeration]" Condition="_Kind == uLang::CDefinition::EKind::Enumeration">*(uLang::CEnumeration*)this</Item>
+            <Item Name="[CEnumerator]" Condition="_Kind == uLang::CDefinition::EKind::Enumerator">*(uLang::CEnumerator*)this</Item>
+            <Item Name="[CFunction]" Condition="_Kind == uLang::CDefinition::EKind::Function">*(uLang::CFunction*)this</Item>
+            <Item Name="[CDataDefinition]" Condition="_Kind == uLang::CDefinition::EKind::Data">*(uLang::CDataDefinition*)this</Item>
+            <Item Name="[CTypeAlias]" Condition="_Kind == uLang::CDefinition::EKind::TypeAlias">*(uLang::CTypeAlias*)this</Item>
+            <Item Name="[CModuleAlias]" Condition="_Kind == uLang::CDefinition::EKind::ModuleAlias">*(uLang::CModuleAlias*)this</Item>
+            <Item Name="[CTypeVariable]" Condition="_Kind == uLang::CDefinition::EKind::TypeVariable">*(uLang::CTypeVariable*)this</Item>
+        </Expand>
+    </Type>
+
+    <!-- CDataDefinition looks good just using CTypedName visualization -->
+
+    <!-- Expressions and ASTs -->
+
+    <Type Name="uLang::CExpressionBase::SAnalysisResult">
+        <DisplayString Condition="ResultType != 0">{*ResultType}</DisplayString>
+        <DisplayString Condition="ResultType == 0">---</DisplayString>
+    </Type>
+
+    <Type Name="uLang::SGlitchResult">
+        <DisplayString>{_Id} {_Message}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::SGlitch">
+        <DisplayString>{_Result}</DisplayString>
+    </Type>
+
+    <!-- Vst::Node
+        FlowIf, PrefixOpLogicalNot, PrePostCall, Where, Lambda, Macro, Parens, ParseError, Escape
+        BinaryOp (BinaryOpAddSub, BinaryOpMulDivInfix), BinaryOpLogicalOr, BinaryOpLogicalAnd, BinaryOpCompare, BinaryOpRange, BinaryOpArrow
+     -->
+    <Type Name="Verse::Vst::Node">
+        <DisplayString>{_Type,en}</DisplayString>
+        <Expand>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <CustomListItems>
+                <Variable Name="CurrentNode" InitialValue="this"/>
+                <Loop>
+                    <Break Condition="CurrentNode == 0"/>
+                    <If Condition="CurrentNode->_Type == Verse::Vst::NodeType::Module">
+                        <Item Name="Module">*CurrentNode</Item>
+                    </If>
+                    <Exec>CurrentNode = CurrentNode->_Parent</Exec>
+                </Loop>
+            </CustomListItems>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <!-- Comment, Identifier, IntLiteral, FloatLiteral, CharLiteral, StringLiteral, Placeholder, PathLiteral -->
+    <Type Name="Verse::Vst::CAtom">
+        <DisplayString>{_Type,en}|{_OriginalCode,s8b}</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <!-- Control: return, break -->
+    <Type Name="Verse::Vst::Control">
+        <DisplayString Condition="_Keyword == Verse::Vst::Control::EControlKeyword::Return">Vst::return {*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data}</DisplayString>
+        <DisplayString Condition="_Keyword == Verse::Vst::Control::EControlKeyword::Break">Vst::break</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Verse::Vst::Clause">
+        <DisplayString>Vst::Clause tag={_Tag,u}</DisplayString>
+        <Expand>
+            <Item Name="whence">_Whence</Item>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Verse::Vst::PrePostCall">
+        <DisplayString>Vst::PrePostCall</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Verse::Vst::TypeSpec">
+        <DisplayString>{*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data} : {*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data+1}</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Verse::Vst::Assignment">
+        <DisplayString Condition="_Tag == Verse::Vst::Assignment::EOp::assign">{*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data} = {*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data+1} [{_Whence}]</DisplayString>
+        <DisplayString Condition="_Tag == Verse::Vst::Assignment::EOp::addAssign">{*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data} += {*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data+1} [{_Whence}]</DisplayString>
+        <DisplayString Condition="_Tag == Verse::Vst::Assignment::EOp::subAssign">{*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data} -= {*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data+1} [{_Whence}]</DisplayString>
+        <DisplayString Condition="_Tag == Verse::Vst::Assignment::EOp::mulAssign">{*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data} mul= {*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data+1} [{_Whence}]</DisplayString>
+        <DisplayString Condition="_Tag == Verse::Vst::Assignment::EOp::divAssign">{*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data} div= {*(uLang::TSPtrG&lt;Verse::Vst::Node,0,uLang::CHeapRawAllocator&gt;*)_Children._ElementStorage._Data+1} [{_Whence}]</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Verse::Vst::Snippet">
+        <DisplayString>Vst::Snippet path={_FilePath,s8b}</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Verse::Vst::Module">
+        <DisplayString>Vst::Module {_Name,s8b} path={_FilePath,s8b}</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+    
+    <Type Name="Verse::Vst::Project">
+        <DisplayString>Vst::Project {_Name,s8b} path={_FilePath,s8b}</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Verse::Vst::Package">
+        <DisplayString>Vst::Package|{_Name}</DisplayString>
+        <Expand>
+            <Item Name="tag">_Tag</Item>
+            <Item Name="whence">_Whence</Item>
+            <ExpandedItem>_Children</ExpandedItem>
+            <Item Name="[raw]">this,!</Item>
+        </Expand>
+    </Type>
+
+
+    <!-- AST / Expressions -->
+
+    <Type Name="uLang::CAstPackage">
+        <DisplayString>VPackage|{_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CAstCompilationUnit">
+        <DisplayString>CompilationUnit|[{_Packages._PointerStorage._ArrayNum,d}] {((uLang::CAstPackage**)_Packages._PointerStorage._ElementStorage._Data)[0]->_Name}...</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CAstProject">
+        <DisplayString>VProject|{_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprModuleDefinition">
+        <DisplayString>VModule|{_Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprSnippet">
+        <DisplayString>VSnippet|{_Path}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprLogic">
+        <DisplayString Condition="_Value == true">true</DisplayString>
+        <DisplayString Condition="_Value == false">false</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprNumber">
+        <DisplayString Condition="_bIsFloat == false">{_IntValue,d}</DisplayString>
+        <DisplayString Condition="_bIsFloat == true">{_FloatValue,g}f</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprString">
+        <DisplayString>{_String}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprEnumerator">
+        <DisplayString>{_Enumerator._Enumeration._Name}.{_Enumerator._Name}</DisplayString>
+    </Type>
+
+<!--
+    <Type Name="uLang::CExprIdentifierBase">
+        <DisplayString Condition="(_Context._Object != nullptr) &amp;&amp; (_Qualifier._Object != nullptr)">{*(_Context._Object)}.{*(_Qualifier._Object)}::</DisplayString>
+        <DisplayString Condition="(_Context._Object == nullptr) &amp;&amp; (_Qualifier._Object != nullptr)">{*(_Qualifier._Object)}::</DisplayString>
+        <DisplayString Condition="(_Context._Object != nullptr) &amp;&amp; (_Qualifier._Object == nullptr)">{*(_Context._Object)}::</DisplayString>
+        <DisplayString Condition="(_Context._Object == nullptr) &amp;&amp; (_Qualifier._Object == nullptr)"></DisplayString>
+    </Type>
+-->
+    <Type Name="uLang::CExprSelf">
+        <DisplayString>self</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprSelfClass">
+        <DisplayString>self_class</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprIdentifierBuiltInMacro">
+        <DisplayString>{_Symbol}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprIdentifierUnresolved">
+        <DisplayString Condition="(_Context._Object != nullptr) &amp;&amp; (_Qualifier._Object != nullptr)">{*(_Context._Object)}.{*(_Qualifier._Object)}::{_Symbol}</DisplayString>
+        <DisplayString Condition="(_Context._Object == nullptr) &amp;&amp; (_Qualifier._Object != nullptr)">{*(_Qualifier._Object)}::{_Symbol}</DisplayString>
+        <DisplayString Condition="(_Context._Object != nullptr) &amp;&amp; (_Qualifier._Object == nullptr)">{*(_Context._Object)}.{_Symbol}</DisplayString>
+        <DisplayString Condition="(_Context._Object == nullptr) &amp;&amp; (_Qualifier._Object == nullptr)">{_Symbol}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprIdentifierClass">
+        <DisplayString>{_Report}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprIdentifierData">
+        <DisplayString Condition="(_Context._Object != nullptr) &amp;&amp; (_Qualifier._Object != nullptr)">{*(_Context._Object)}.{*(_Qualifier._Object)}::{_DataDefinition}</DisplayString>
+        <DisplayString Condition="(_Context._Object == nullptr) &amp;&amp; (_Qualifier._Object != nullptr)">{*(_Qualifier._Object)}::{_DataDefinition}</DisplayString>
+        <DisplayString Condition="(_Context._Object != nullptr) &amp;&amp; (_Qualifier._Object == nullptr)">{*(_Context._Object)}.{_DataDefinition}</DisplayString>
+        <DisplayString Condition="(_Context._Object == nullptr) &amp;&amp; (_Qualifier._Object == nullptr)">{_DataDefinition}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprEnumLiteral">
+        <DisplayString>{_Enumerator}</DisplayString>
+    </Type>
+
+    <!-- CExprEnumerationType -->
+
+    <!-- CExprInterfaceType -->
+
+    <!-- CExprIdentifierTypeAlias -->
+    <Type Name="uLang::CExprIdentifierTypeAlias">
+        <DisplayString>{_TypeAlias._Name}</DisplayString>
+    </Type>
+
+    <!-- CExprIdentifierFunction -->
+    <Type Name="uLang::CExprIdentifierFunction">
+        <DisplayString>{_Function._Name}</DisplayString>
+    </Type>
+
+    <!-- CExprIdentifierOverloadedFunction -->
+
+    <Type Name="uLang::CExprDefinition">
+        <DisplayString Condition="(_ValueDomain._Object == nullptr) &amp;&amp; (_Value._Object != nullptr) &amp;&amp; (_Element._Object != nullptr)">{*(_Element._Object)}:={*(_Value._Object)}</DisplayString>
+        <DisplayString Condition="(_ValueDomain._Object != nullptr) &amp;&amp; (_Value._Object != nullptr) &amp;&amp; (_Element._Object != nullptr)">{*(_Element._Object)}:{*(_ValueDomain._Object)}={*(_Value._Object)}</DisplayString>
+        <DisplayString Condition="(_ValueDomain._Object == nullptr) &amp;&amp; (_Value._Object == nullptr) &amp;&amp; (_Element._Object != nullptr)">{*(_Element._Object)}</DisplayString>
+        <DisplayString Condition="(_ValueDomain._Object != nullptr) &amp;&amp; (_Value._Object == nullptr) &amp;&amp; (_Element._Object != nullptr)">{*(_Element._Object)}:{*(_ValueDomain._Object)}</DisplayString>
+        <DisplayString Condition="(_ValueDomain._Object != nullptr) &amp;&amp; (_Value._Object == nullptr) &amp;&amp; (_Element._Object == nullptr)">:{*(_ValueDomain._Object)}</DisplayString>
+    </Type>
+
+    <!-- CExprMacroCall -->
+
+    <Type Name="uLang::CExprInvocation">
+        <DisplayString Condition="(_CallsiteBracketStyle != 2) &amp;&amp; (_Argument._Object == 0)">{*_Callee._Object}()</DisplayString>
+        <DisplayString Condition="(_CallsiteBracketStyle != 2) &amp;&amp; (_Argument._Object != 0)">{*_Callee._Object}({*(_Argument._Object)})</DisplayString>
+        <DisplayString Condition="(_CallsiteBracketStyle == 2) &amp;&amp; (_Argument._Object == 0)">{*_Callee._Object}[]</DisplayString>
+        <DisplayString Condition="(_CallsiteBracketStyle == 2) &amp;&amp; (_Argument._Object != 0)">{*_Callee._Object}[{*(_Argument._Object)}]</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprTupleElement">
+        <DisplayString>{*(_TupleExpr._Object)}({_ElemIdx})</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprAssignment">
+        <DisplayString Condition="_Op == 0">{*(_Lhs._Object)} = {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 1">{*(_Lhs._Object)} += {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 2">{*(_Lhs._Object)} -= {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 3">{*(_Lhs._Object)} *= {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 4">{*(_Lhs._Object)} /= {*(_Rhs._Object)}</DisplayString>
+        <DisplayString>{*(_Lhs._Object)} assign {*(_Rhs._Object)}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprIdentifierLocal">
+        <DisplayString>{_TypedName._Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprIdentifierClassMember">
+        <DisplayString>{_Class}.{_TypedName._Name}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprBinaryOp">
+        <DisplayString>{*(_Lhs._Object)} op {*(_Rhs._Object)}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprComparison">
+        <DisplayString Condition="_Op == 0">{*(_Lhs._Object)} &lt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 1">{*(_Lhs._Object)} &lt;= {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 2">{*(_Lhs._Object)} &gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 3">{*(_Lhs._Object)} &gt;= {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 4">{*(_Lhs._Object)} == {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 5">{*(_Lhs._Object)} &lt;&gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 6">{*(_Lhs._Object)} &lt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 7">{*(_Lhs._Object)} &lt;= {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 8">{*(_Lhs._Object)} &gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 9">{*(_Lhs._Object)} &gt;= {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 10">{*(_Lhs._Object)} == {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 11">{*(_Lhs._Object)} &lt;&gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 12">{*(_Lhs._Object)} == {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 13">{*(_Lhs._Object)} &lt;&gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 14">{*(_Lhs._Object)} == {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 15">{*(_Lhs._Object)} &lt;&gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 16">{*(_Lhs._Object)} == {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 17">{*(_Lhs._Object)} &lt;&gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 18">{*(_Lhs._Object)} == {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 19">{*(_Lhs._Object)} &lt;&gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 20">{*(_Lhs._Object)} == {*(_Rhs._Object)}</DisplayString>
+        <DisplayString Condition="_Op == 21">{*(_Lhs._Object)} &lt;&gt; {*(_Rhs._Object)}</DisplayString>
+        <DisplayString>{*(_Lhs._Object)} cmp {*(_Rhs._Object)}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprShortCircuitAnd">
+        <DisplayString>{*(_Lhs._Object)} &amp;&amp; {*(_Rhs._Object)}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprShortCircuitOr">
+        <DisplayString>{*(_Lhs._Object)} || {*(_Rhs._Object)}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprMakeTuple">
+        <DisplayString Condition="_SubExprs._PointerStorage._ArrayNum == 0">()</DisplayString>
+        <DisplayString Condition="_SubExprs._PointerStorage._ArrayNum == 1">({**(uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data})</DisplayString>
+        <DisplayString Condition="_SubExprs._PointerStorage._ArrayNum == 2">({**(uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+1)})</DisplayString>
+        <DisplayString Condition="_SubExprs._PointerStorage._ArrayNum == 3">({**(uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+1)}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+2)})</DisplayString>
+        <DisplayString Condition="_SubExprs._PointerStorage._ArrayNum == 4">({**(uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+1)}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+2)}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+3)})</DisplayString>
+        <DisplayString Condition="_SubExprs._PointerStorage._ArrayNum &gt;= 5">({**(uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+1)}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+2)}, {**((uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data+3)}, ...)</DisplayString>
+    </Type>
+
+    <!-- CExprArrayTypeFormer -->
+
+    <!-- CExprGeneratorTypeFormer -->
+
+    <!-- CExprOptionalTypeFormer -->
+
+    <!-- CExprSubtype -->
+
+    <Type Name="uLang::CExprTupleType">
+        <DisplayString Condition="_ElementTypeExprs._PointerStorage._ArrayNum == 0">tuple()</DisplayString>
+        <DisplayString Condition="_ElementTypeExprs._PointerStorage._ArrayNum == 1">tuple({**(uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data})</DisplayString>
+        <DisplayString Condition="_ElementTypeExprs._PointerStorage._ArrayNum == 2">tuple({**(uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+1)})</DisplayString>
+        <DisplayString Condition="_ElementTypeExprs._PointerStorage._ArrayNum == 3">tuple({**(uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+1)}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+2)})</DisplayString>
+        <DisplayString Condition="_ElementTypeExprs._PointerStorage._ArrayNum == 4">tuple({**(uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+1)}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+2)}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+3)})</DisplayString>
+        <DisplayString Condition="_ElementTypeExprs._PointerStorage._ArrayNum &gt;= 5">tuple({**(uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+1)}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+2)}, {**((uLang::CExpressionBase**)_ElementTypeExprs._PointerStorage._ElementStorage._Data+3)}, ...)</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprLogicalNot">
+        <DisplayString>!{*(_Operand._Object)}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprMakeOptional">
+        <DisplayString>optional{{{*(_Operand._Object)}}}</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprPointerToReference">
+        <DisplayString>{*(_Operand._Object)}^</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprSet">
+        <DisplayString>set {*(_Operand._Object)}</DisplayString>
+    </Type>
+
+    <!-- CExprNewPointer -->
+
+    <Type Name="uLang::CExprReferenceToValue">
+        <DisplayString>{*(_Operand._Object)}</DisplayString>
+    </Type>
+    
+    <Type Name="uLang::CExprCodeBlock">
+        <DisplayString Condition="_SubExprs._PointerStorage._ArrayNum == 0">{{}}</DisplayString>
+        <DisplayString Condition="_SubExprs._PointerStorage._ArrayNum == 1">{{{**(uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data}}}</DisplayString>
+        <DisplayString>{{{**(uLang::CExpressionBase**)_SubExprs._PointerStorage._ElementStorage._Data} [{_SubExprs._PointerStorage._ArrayNum,d}...]}}</DisplayString>
+        <Expand>
+            <ExpandedItem>_SubExprs</ExpandedItem>
+        </Expand>
+    </Type>
+
+    <!-- CExprDefer -->
+
+    <!-- <Type Name="uLang::CExprIf">
+        <DisplayString>if...</DisplayString>
+        <Expand>
+            <ExpandedItem>_Clauses</ExpandedItem>
+        </Expand>
+    </Type>
+
+    <Type Name="uLang::SClause">
+        <DisplayString Condition="_Test._Object == 0">else {*(_Then._Object)}</DisplayString>
+        <DisplayString Condition="_Then._Object == 0">{*(_Test._Object)} then {{}}</DisplayString>
+        <DisplayString>{*(_Test._Object)} then {*(_Then._Object)}</DisplayString>
+    </Type> -->
+
+    <!-- CExprIteration -->
+
+    <!-- CExprLoop -->
+
+    <Type Name="uLang::CExprBreak">
+        <DisplayString>break</DisplayString>
+    </Type>
+
+    <Type Name="uLang::CExprReturn">
+        <DisplayString>return ({*(_Result._Object)})</DisplayString>
+    </Type>
+
+    <!-- CExprSync         - sync {Coro1(); Coro2()} -->
+    <!-- CExprRush         - rush {Coro1(); Coro2()} -->
+    <!-- CExprRace         - race {Coro1(); Coro2()} -->
+    <!-- CExprSyncIterated - sync(Item:Container) {Item.Coro1(); Coro2(Item)} -->
+    <!-- CExprRushIterated - rush(Item:Container) {Item.Coro1(); Coro2(Item)} -->
+    <!-- CExprRaceIterated - race(Item:Container) {Item.Coro1(); Coro2(Item)} -->
+    <!-- CExprBranch       - branch {Coro1(); Coro2()} -->
+    <!-- CExprSpawn        - spawn {Coro()} -->
+    <!-- CExprEnumDefinition -->
+    <!-- CExprInterfaceDefinition -->
+    <!-- CExprClassDefinition -->
+    <Type Name="uLang::CExprClassDefinition">
+        <DisplayString>{_Class}</DisplayString>
+    </Type>
+
+    <!-- CExprDataDefinition -->
+    <!-- CExprFunctionDefinition -->
+    <!-- CExprTypeAliasDefinition -->
+
+    <Type Name="uLang::CExprUsing">
+        <DisplayString>using{{{*_Path._Object}}}</DisplayString>
+    </Type>
+
+    
+    <!-- CExprImport -->
+    <Type Name="uLang::CExprMakeNamed">
+        <DisplayString Condition="_Value._Object">?{_Name} := {*_Value._Object}</DisplayString>
+        <DisplayString Condition="!_Value._Object">?{_Name}</DisplayString>
+    </Type>
+
+    <!-- CProject -->
+    <!-- CPackage -->
+    <!-- CSnippet -->
+
+    <Type Name="uLang::SAccessLevel">
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Public &amp;&amp; _IsDefault == 0">Public (default)</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Internal &amp;&amp; _IsDefault == 0">Internal (default)</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Protected &amp;&amp; _IsDefault == 0">Protected (default)</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Private &amp;&amp; _IsDefault == 0">Private (default)</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Scoped &amp;&amp; _IsDefault == 0">Scoped (default)</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::EpicInternal &amp;&amp; _IsDefault == 0">Epic Internal (default)</DisplayString>
+        
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Public">Public</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Internal">Internal</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Protected">Protected</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Private">Private</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::Scoped">Scoped</DisplayString>
+        <DisplayString Condition="_Kind == uLang::SAccessLevel::EKind::EpicInternal">Epic Internal</DisplayString>
+        <DisplayString>Invalid</DisplayString>
+    </Type>
+
+
+</AutoVisualizer>
